@@ -1,0 +1,10 @@
+
+wrench_topic    : "filtered_wrench_base"
+dwrench_topic   : "delta_force"
+vel_topic       : "current_velocity"
+pos_topic       : "current_pose"
+
+assistance_topic: "assistance"
+reference_traj  : "human_target"
+
+robot_has_human_reference: false
