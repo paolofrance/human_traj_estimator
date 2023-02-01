@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   rosdyn_core
   geometry_msgs
   tf
-  pbo_service
+#   pbo_service
   )
 
 catkin_package(

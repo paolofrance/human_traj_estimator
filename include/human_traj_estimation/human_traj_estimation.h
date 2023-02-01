@@ -7,7 +7,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float32.h>
-#include <pbo_service/updateKest.h>
+// #include <pbo_service/updateKest.h>
 
 class TrajEstimator
 {
@@ -24,8 +24,8 @@ public:
   void currPoseCallback(const geometry_msgs::PoseStampedConstPtr& msg );
   double evaluateFis   (double dforce, double vel );
   bool updatePoseEstimate(geometry_msgs::PoseStamped& ret); 
-  bool updateKestSrv( pbo_service::updateKest::Request  &req,
-                      pbo_service::updateKest::Response &res);
+//   bool updateKestSrv( pbo_service::updateKest::Request  &req,
+//                       pbo_service::updateKest::Response &res);
 
 private:
   ros::NodeHandle nh_;

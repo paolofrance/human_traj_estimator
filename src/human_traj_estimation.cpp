@@ -190,15 +190,15 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 
 
 
-bool TrajEstimator::updateKestSrv(pbo_service::updateKest::Request  &req,
-                                  pbo_service::updateKest::Response &res)
-{
-  K_assistance_ = req.K_assist;
-  last_pose_ = cur_pos_;
-  ROS_INFO_STREAM("K_assistance updated ! new K_assistance_: " << K_assistance_);
-  res.res = true;
-  return true;
-}
+// bool TrajEstimator::updateKestSrv(pbo_service::updateKest::Request  &req,
+//                                   pbo_service::updateKest::Response &res)
+// {
+//   K_assistance_ = req.K_assist;
+//   last_pose_ = cur_pos_;
+//   ROS_INFO_STREAM("K_assistance updated ! new K_assistance_: " << K_assistance_);
+//   res.res = true;
+//   return true;
+// }
 
 
 
