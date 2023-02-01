@@ -27,14 +27,14 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
   path += "/config/assistance.fis";
   ROS_INFO_STREAM("recovering path: " << path);
   
-//   engine_ = fl::FisImporter().fromFile(path);
-//   std::string status;
-//   if (not engine_->isReady(&status))
-//     ROS_ERROR_STREAM("engine is not ready");
+  engine_ = fl::FisImporter().fromFile(path);
+  std::string status;
+  if (not engine_->isReady(&status))
+    ROS_ERROR_STREAM("engine is not ready");
 
-//   d_force_   = engine_->getInputVariable("dforce");
-//   vel_     = engine_->getInputVariable("velocity");
-//   assistance_= engine_->getOutputVariable("assistance");
+  d_force_   = engine_->getInputVariable("dforce");
+  vel_     = engine_->getInputVariable("velocity");
+  assistance_= engine_->getOutputVariable("assistance");
   
   if ( !nh_.getParam ( "max_fl", max_fl_) )
   {
@@ -106,19 +106,19 @@ double TrajEstimator::evaluateFis( double dforce, double vel )
   if(vel >0.3)
     vel=0.29;
   
-//   d_force_->setValue(dforce);
-//   vel_->setValue(vel);
-//   engine_->process();
+  d_force_->setValue(dforce);
+  vel_->setValue(vel);
+  engine_->process();
   
-//   double out = assistance_->getValue();
+  double out = assistance_->getValue();
   
-//   ROS_INFO_STREAM_THROTTLE(0.2,GREEN<<"dforce : "<<d_force_->getValue()<<", vel: "<<vel_->getValue());
-//   
-//   if ( isnan(out) )
-//   {
-//     out = 0;
-//     ROS_WARN_STREAM_THROTTLE(2.0,"setting assistance to max: "<< out<< " with dforce: "<<d_force_->getValue()<<", and vel "<< vel_->getValue() );
-//   }
+  ROS_INFO_STREAM_THROTTLE(0.2,GREEN<<"dforce : "<<d_force_->getValue()<<", vel: "<<vel_->getValue());
+  
+  if ( isnan(out) )
+  {
+    out = 0;
+    ROS_WARN_STREAM_THROTTLE(2.0,"setting assistance to max: "<< out<< " with dforce: "<<d_force_->getValue()<<", and vel "<< vel_->getValue() );
+  }
   
 //   if ( ( out > alpha_max_ ) )
 //   {
@@ -131,7 +131,7 @@ double TrajEstimator::evaluateFis( double dforce, double vel )
 //     CNR_INFO_THROTTLE(this->logger(),2.0,"saturating alpha to min: "<<out);
 //   }    
   
-//   return out;
+  return out;
 }
 
 

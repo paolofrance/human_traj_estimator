@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
-// #include <fl/Headers.h>
+#include <fl/Headers.h>
 #include <rosdyn_core/primitives.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TwistStamped.h>
@@ -51,10 +51,10 @@ private:
   
   double dt_;
   
-//   fl::Engine*         engine_;
-//   fl::InputVariable*  d_force_ ;
-//   fl::InputVariable*  vel_ ;
-//   fl::OutputVariable* assistance_ ;
+  fl::Engine*         engine_;
+  fl::InputVariable*  d_force_ ;
+  fl::InputVariable*  vel_ ;
+  fl::OutputVariable* assistance_ ;
   
   
 };
