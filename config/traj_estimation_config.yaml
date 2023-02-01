@@ -1,4 +1,4 @@
-
+#wrench_topic    : "filtered_wrench_base"
 wrench_topic    : "filtered_wrench_base"
 dwrench_topic   : "delta_force"
 vel_topic       : "current_velocity"
@@ -8,3 +8,5 @@ assistance_topic: "assistance"
 reference_traj  : "human_target"
 
 robot_has_human_reference: false
+
+K_assistance: 0.0002

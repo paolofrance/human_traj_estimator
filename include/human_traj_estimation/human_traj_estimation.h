@@ -1,12 +1,13 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <fl/Headers.h>
+// #include <fl/Headers.h>
 #include <rosdyn_core/primitives.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float32.h>
+#include <pbo_service/updateKest.h>
 
 class TrajEstimator
 {
@@ -23,6 +24,8 @@ public:
   void currPoseCallback(const geometry_msgs::PoseStampedConstPtr& msg );
   double evaluateFis   (double dforce, double vel );
   bool updatePoseEstimate(geometry_msgs::PoseStamped& ret); 
+  bool updateKestSrv( pbo_service::updateKest::Request  &req,
+                      pbo_service::updateKest::Response &res);
 
 private:
   ros::NodeHandle nh_;
@@ -40,16 +43,18 @@ private:
   geometry_msgs::PoseStamped init_pose_;
   geometry_msgs::PoseStamped last_pose_;
   
+  double K_assistance_;
+  
   double max_fl_;
   double min_fl_;
   double alpha_;
   
   double dt_;
   
-  fl::Engine*         engine_;
-  fl::InputVariable*  d_force_ ;
-  fl::InputVariable*  vel_ ;
-  fl::OutputVariable* assistance_ ;
+//   fl::Engine*         engine_;
+//   fl::InputVariable*  d_force_ ;
+//   fl::InputVariable*  vel_ ;
+//   fl::OutputVariable* assistance_ ;
   
   
 };

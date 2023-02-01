@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   
   TrajEstimator te(nh);
   
-  std::string wrench_topic, dwrench_topic, vel_topic, pos_topic, assistance_topic, reference_traj;
+  std::string wrench_topic, dwrench_topic, vel_topic, pos_topic, assistance_topic, reference_traj, update_Kest;
   
   if ( !nh.getParam ( "wrench_topic", wrench_topic) )
   {
@@ -49,7 +49,11 @@ int main(int argc, char **argv)
     robot_ref = false;
     ROS_WARN_STREAM (nh.getNamespace() << " /robot_has_human_reference not set. default " << robot_ref);
   }
-
+  if ( !nh.getParam ( "update_Kest", update_Kest) )
+  {
+    update_Kest = "update_Kest";
+    ROS_WARN_STREAM (nh.getNamespace() << " /update_Kest not set. default " << update_Kest);
+  }
   
   ros::Subscriber wrench_sub    = nh.subscribe(wrench_topic , 10, &TrajEstimator::wrenchCallback  , &te);
   ros::Subscriber dwrench_sub   = nh.subscribe(dwrench_topic, 10, &TrajEstimator::dWrenchCallback , &te);
@@ -61,6 +65,7 @@ int main(int argc, char **argv)
   ros::Publisher trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>(reference_traj,10);
   ros::Publisher r_trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>("/target_cart_pose",10);
   
+  ros::ServiceServer update_Kest_server = nh.advertiseService(update_Kest, &TrajEstimator::updateKestSrv, &te);
   ros::Duration(0.1).sleep();
   
   ros::Rate rate(125);

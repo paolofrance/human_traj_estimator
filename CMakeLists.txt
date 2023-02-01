@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   rosdyn_core
   geometry_msgs
   tf
+  pbo_service
   )
 
 catkin_package(
@@ -28,7 +29,8 @@ human_traj_estimation src/human_traj_estimation.cpp
 )
 
 add_executable(human_traj_estimation_node src/human_traj_estimation_node.cpp)
-target_link_libraries( human_traj_estimation_node human_traj_estimation ${catkin_LIBRARIES} fuzzylite)
+# target_link_libraries( human_traj_estimation_node human_traj_estimation ${catkin_LIBRARIES} fuzzylite)
+target_link_libraries( human_traj_estimation_node human_traj_estimation ${catkin_LIBRARIES} )
 add_dependencies(human_traj_estimation_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 

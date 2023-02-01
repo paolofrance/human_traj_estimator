@@ -11,22 +11,30 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
   
   if ( !nh_.getParam ( "sampling_time", dt_) )
   {
-    ROS_WARN_STREAM (nh_.getNamespace() << " /sampling_time set. default 0.008");
     dt_=0.008;
+    ROS_WARN_STREAM (nh_.getNamespace() << " /sampling_time set. default : "<<dt_);
   }
+  
+  if ( !nh_.getParam ( "K_assistance", K_assistance_) )
+  {
+    K_assistance_=0.0001;
+    ROS_WARN_STREAM (nh_.getNamespace() << " /K_assistance set. default : " << K_assistance_);
+  }
+  
+  ROS_INFO_STREAM (nh_.getNamespace() << " /K_assistance set. default : " << K_assistance_);
   
   std::string path = ros::package::getPath("human_traj_estimator");
   path += "/config/assistance.fis";
   ROS_INFO_STREAM("recovering path: " << path);
   
-  engine_ = fl::FisImporter().fromFile(path);
-  std::string status;
-  if (not engine_->isReady(&status))
-    ROS_ERROR_STREAM("engine is not ready");
+//   engine_ = fl::FisImporter().fromFile(path);
+//   std::string status;
+//   if (not engine_->isReady(&status))
+//     ROS_ERROR_STREAM("engine is not ready");
 
-  d_force_   = engine_->getInputVariable("dforce");
-  vel_     = engine_->getInputVariable("velocity");
-  assistance_= engine_->getOutputVariable("assistance");
+//   d_force_   = engine_->getInputVariable("dforce");
+//   vel_     = engine_->getInputVariable("velocity");
+//   assistance_= engine_->getOutputVariable("assistance");
   
   if ( !nh_.getParam ( "max_fl", max_fl_) )
   {
@@ -98,19 +106,19 @@ double TrajEstimator::evaluateFis( double dforce, double vel )
   if(vel >0.3)
     vel=0.29;
   
-  d_force_->setValue(dforce);
-  vel_->setValue(vel);
-  engine_->process();
+//   d_force_->setValue(dforce);
+//   vel_->setValue(vel);
+//   engine_->process();
   
-  double out = assistance_->getValue();
+//   double out = assistance_->getValue();
   
-  ROS_INFO_STREAM_THROTTLE(0.2,GREEN<<"dforce : "<<d_force_->getValue()<<", vel: "<<vel_->getValue());
-  
-  if ( isnan(out) )
-  {
-    out = 0;
-    ROS_WARN_STREAM_THROTTLE(2.0,"setting assistance to max: "<< out<< " with dforce: "<<d_force_->getValue()<<", and vel "<< vel_->getValue() );
-  }
+//   ROS_INFO_STREAM_THROTTLE(0.2,GREEN<<"dforce : "<<d_force_->getValue()<<", vel: "<<vel_->getValue());
+//   
+//   if ( isnan(out) )
+//   {
+//     out = 0;
+//     ROS_WARN_STREAM_THROTTLE(2.0,"setting assistance to max: "<< out<< " with dforce: "<<d_force_->getValue()<<", and vel "<< vel_->getValue() );
+//   }
   
 //   if ( ( out > alpha_max_ ) )
 //   {
@@ -123,7 +131,7 @@ double TrajEstimator::evaluateFis( double dforce, double vel )
 //     CNR_INFO_THROTTLE(this->logger(),2.0,"saturating alpha to min: "<<out);
 //   }    
   
-  return out;
+//   return out;
 }
 
 
@@ -140,9 +148,9 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
     
     if (! isnan (w_b_(0)/std::fabs(w_b_(0))) )
     {
-      ret.pose.position.x += 0.0001 * w_b_(0) ;
-      ret.pose.position.y += 0.0001 * w_b_(1) ;
-      ret.pose.position.z += 0.0001 * w_b_(2) ;
+      ret.pose.position.x += K_assistance_ * w_b_(0) ;
+      ret.pose.position.y += K_assistance_ * w_b_(1) ;
+      ret.pose.position.z += K_assistance_ * w_b_(2) ;
       
 //     if (! isnan (w_b_(0)/std::fabs(w_b_(0))) )
 //       ret.pose.position.x += ( 0.00001 * std::fabs(dW_(0)) * w_b_(0)/std::fabs(w_b_(0)) ) + ( 0.001 * velocity_(0) );
@@ -182,6 +190,15 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 
 
 
+bool TrajEstimator::updateKestSrv(pbo_service::updateKest::Request  &req,
+                                  pbo_service::updateKest::Response &res)
+{
+  K_assistance_ = req.K_assist;
+  last_pose_ = cur_pos_;
+  ROS_INFO_STREAM("K_assistance updated ! new K_assistance_: " << K_assistance_);
+  res.res = true;
+  return true;
+}
 
 
 
