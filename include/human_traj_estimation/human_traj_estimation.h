@@ -7,6 +7,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float32.h>
+#include <rotations_helper/euler_angles_helper.h>
 // #include <pbo_service/updateKest.h>
 
 class TrajEstimator
@@ -22,10 +23,15 @@ public:
   void dWrenchCallback (const geometry_msgs::WrenchStampedConstPtr& msg );
   void velocityCallback(const geometry_msgs::TwistStampedConstPtr& msg );
   void currPoseCallback(const geometry_msgs::PoseStampedConstPtr& msg );
-  double evaluateFis   (double dforce, double vel );
+//   double evaluateFis   (double dforce, double vel );
   bool updatePoseEstimate(geometry_msgs::PoseStamped& ret); 
 //   bool updateKestSrv( pbo_service::updateKest::Request  &req,
 //                       pbo_service::updateKest::Response &res);
+  
+  EulerAnglesHelper actual_rot_;
+  double init_rot_;
+  
+  Eigen::Affine3d T_robot_base_targetpose_;
 
 private:
   ros::NodeHandle nh_;
@@ -38,24 +44,26 @@ private:
   Eigen::Vector6d dW_;
   
   bool init_pos_ok;
+  bool first_cb_;
   
   geometry_msgs::PoseStamped cur_pos_;
   geometry_msgs::PoseStamped init_pose_;
   geometry_msgs::PoseStamped last_pose_;
   
-  double K_assistance_;
+  double K_tras_;
+  double K_rot_;
   
   double max_fl_;
   double min_fl_;
   double alpha_;
   
   double dt_;
-  
+/*  
   fl::Engine*         engine_;
   fl::InputVariable*  d_force_ ;
   fl::InputVariable*  vel_ ;
   fl::OutputVariable* assistance_ ;
-  
+  */
   
 };
 

@@ -11,6 +11,9 @@
   <depend>rosdyn_core</depend>
   <depend>geometry_msgs</depend>
   <depend>tf</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>rotations_helper</depend>
 <!--   <depend>pbo_service</depend> -->
 
 

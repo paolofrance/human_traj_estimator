@@ -1,6 +1,8 @@
 #include <human_traj_estimation/human_traj_estimation.h>
 #include <human_traj_estimation/utils.h>
 #include <ros/package.h>
+#include <tf_conversions/tf_eigen.h>
+#include <tf2_eigen/tf2_eigen.h>
 
 TrajEstimator::TrajEstimator(ros::NodeHandle nh)
 :nh_(nh)
@@ -15,26 +17,20 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
     ROS_WARN_STREAM (nh_.getNamespace() << " /sampling_time set. default : "<<dt_);
   }
   
-  if ( !nh_.getParam ( "K_assistance", K_assistance_) )
+  if ( !nh_.getParam ( "K_tras", K_tras_) )
   {
-    K_assistance_=0.0001;
-    ROS_WARN_STREAM (nh_.getNamespace() << " /K_assistance set. default : " << K_assistance_);
+    K_tras_=0.0001;
+    ROS_WARN_STREAM (nh_.getNamespace() << " /K_tras set. default : " << K_tras_);
   }
   
-  ROS_INFO_STREAM (nh_.getNamespace() << " /K_assistance set. default : " << K_assistance_);
+  if ( !nh_.getParam ( "K_rot", K_rot_) )
+  {
+    K_rot_=0.000001;
+    ROS_WARN_STREAM (nh_.getNamespace() << " /K_tras set. default : " << K_rot_);
+  }
   
-  std::string path = ros::package::getPath("human_traj_estimator");
-  path += "/config/assistance.fis";
-  ROS_INFO_STREAM("recovering path: " << path);
-  
-  engine_ = fl::FisImporter().fromFile(path);
-  std::string status;
-  if (not engine_->isReady(&status))
-    ROS_ERROR_STREAM("engine is not ready");
-
-  d_force_   = engine_->getInputVariable("dforce");
-  vel_     = engine_->getInputVariable("velocity");
-  assistance_= engine_->getOutputVariable("assistance");
+  ROS_INFO_STREAM (nh_.getNamespace() << " /K_tras set. default : " << K_tras_);
+  ROS_INFO_STREAM (nh_.getNamespace() << " /K_rot set. default : " << K_rot_);
   
   if ( !nh_.getParam ( "max_fl", max_fl_) )
   {
@@ -44,6 +40,7 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
   
   alpha_ = 0.95;
   init_pos_ok = false;
+  first_cb_ = false;
 
 }
 
@@ -96,86 +93,37 @@ void TrajEstimator::currPoseCallback(const geometry_msgs::PoseStampedConstPtr& m
     last_pose_ = cur_pos_;
     init_pos_ok = true;
   }
+  
+  tf2::fromMsg (cur_pos_.pose, T_robot_base_targetpose_);
+  
 }
-
-
-double TrajEstimator::evaluateFis( double dforce, double vel )
-{
-  if(dforce>20)
-    dforce=19;
-  if(vel >0.3)
-    vel=0.29;
-  
-  d_force_->setValue(dforce);
-  vel_->setValue(vel);
-  engine_->process();
-  
-  double out = assistance_->getValue();
-  
-  ROS_INFO_STREAM_THROTTLE(0.2,GREEN<<"dforce : "<<d_force_->getValue()<<", vel: "<<vel_->getValue());
-  
-  if ( isnan(out) )
-  {
-    out = 0;
-    ROS_WARN_STREAM_THROTTLE(2.0,"setting assistance to max: "<< out<< " with dforce: "<<d_force_->getValue()<<", and vel "<< vel_->getValue() );
-  }
-  
-//   if ( ( out > alpha_max_ ) )
-//   {
-//     out = alpha_max_ ;
-//     CNR_INFO_THROTTLE(this->logger(),2.0,"saturating alpha to max: "<<out);
-//   }
-//   else if ( out < alpha_min_  )
-//   {
-//     out = alpha_min_;
-//     CNR_INFO_THROTTLE(this->logger(),2.0,"saturating alpha to min: "<<out);
-//   }    
-  
-  return out;
-}
-
 
 
 bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 {
   if (init_pos_ok)
   {
-    ret.pose.orientation = init_pose_.pose.orientation;
+    
+//     ret.pose.orientation = init_pose_.pose.orientation;
     if (alpha_>0.5)
-      ret.pose.position = last_pose_.pose.position;
+      ret.pose = last_pose_.pose;
     else
-      ret.pose.position = cur_pos_.pose.position;
+      ret.pose = cur_pos_.pose;
     
     if (! isnan (w_b_(0)/std::fabs(w_b_(0))) )
     {
-      ret.pose.position.x += K_assistance_ * w_b_(0) ;
-      ret.pose.position.y += K_assistance_ * w_b_(1) ;
-      ret.pose.position.z += K_assistance_ * w_b_(2) ;
+      ret.pose.position.x += K_tras_ * w_b_(0) ;
+      ret.pose.position.y += K_tras_ * w_b_(1) ;
+      ret.pose.position.z += K_tras_ * w_b_(2) ;
       
-//     if (! isnan (w_b_(0)/std::fabs(w_b_(0))) )
-//       ret.pose.position.x += ( 0.00001 * std::fabs(dW_(0)) * w_b_(0)/std::fabs(w_b_(0)) ) + ( 0.001 * velocity_(0) );
-//     if (! isnan (w_b_(1)/std::fabs(w_b_(1))) )
-//       ret.pose.position.y += ( 0.00001 * std::fabs(dW_(1)) * w_b_(1)/std::fabs(w_b_(1)) ) + ( 0.001 * velocity_(1) );
-//     if (! isnan (w_b_(2)/std::fabs(w_b_(2))) )
-//       ret.pose.position.z += ( 0.00001 * std::fabs(dW_(2)) * w_b_(2)/std::fabs(w_b_(2)) ) + ( 0.001 * velocity_(2) );
+      double delta_z = K_rot_ * w_b_(5);
+      
+      Eigen::Quaterniond rotation_quaternion(T_robot_base_targetpose_.rotation());
+      Eigen::Quaterniond additional_rotation_quaternion(Eigen::AngleAxisd(delta_z, Eigen::Vector3d::UnitZ()));
+      rotation_quaternion = additional_rotation_quaternion * rotation_quaternion;
+      tf2::convert(rotation_quaternion, ret.pose.orientation);
+      
     }
-    
-    
-//     double al_x = evaluateFis( std::fabs( dW_(0) ) ,std::fabs( velocity_(0) ) );
-//     double al_y = evaluateFis( std::fabs( dW_(1) ) ,std::fabs( velocity_(1) ) );
-//     double al_z = evaluateFis( std::fabs( dW_(2) ) ,std::fabs( velocity_(2) ) );
-//     
-//     ROS_INFO_STREAM_THROTTLE(0.2,"al_x : "<<al_x <<", al_y : "<<al_y <<", al_z : "<<al_z);
-//     
-//     if (! isnan (dW_(0)/std::fabs(dW_(0))) )
-//       ret.pose.position.x += 0.1 * al_x * dW_(0)/std::fabs(dW_(0));
-//     if (! isnan (dW_(1)/std::fabs(dW_(1))) )
-//       ret.pose.position.y += 0.1 * al_y * dW_(1)/std::fabs(dW_(1));
-//     if (! isnan (dW_(2)/std::fabs(dW_(2))) )
-//       ret.pose.position.z += 0.1 * al_z * dW_(2)/std::fabs(dW_(2));
-//     
-//     ROS_INFO_STREAM_THROTTLE(0.2,"vx : "<<dW_(0)/std::fabs(dW_(0))<<", v_y : "<<dW_(1)/std::fabs(dW_(1))<<", v_z : "<<dW_(2)/std::fabs(dW_(2)));
-    
     last_pose_ = ret;
   }
   else
@@ -193,9 +141,9 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 // bool TrajEstimator::updateKestSrv(pbo_service::updateKest::Request  &req,
 //                                   pbo_service::updateKest::Response &res)
 // {
-//   K_assistance_ = req.K_assist;
+//   K_tras_ = req.K_assist;
 //   last_pose_ = cur_pos_;
-//   ROS_INFO_STREAM("K_assistance updated ! new K_assistance_: " << K_assistance_);
+//   ROS_INFO_STREAM("K_tras updated ! new K_tras_: " << K_tras_);
 //   res.res = true;
 //   return true;
 // }

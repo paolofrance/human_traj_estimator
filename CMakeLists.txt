@@ -9,6 +9,9 @@ find_package(catkin REQUIRED COMPONENTS
   rosdyn_core
   geometry_msgs
   tf
+  tf2
+  tf2_ros
+  rotations_helper
 #   pbo_service
   )
 
