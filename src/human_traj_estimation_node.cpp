@@ -66,6 +66,9 @@ int main(int argc, char **argv)
   ros::Publisher r_trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>("/target_cart_pose",10);
   
 //   ros::ServiceServer update_Kest_server = nh.advertiseService(update_Kest, &TrajEstimator::updateKestSrv, &te);
+  
+  ros::ServiceServer reset_pose_srv = nh.advertiseService("reset_pose_estimation", &TrajEstimator::resetPose, &te);
+  
   ros::Duration(0.1).sleep();
   
   ros::Rate rate(125);

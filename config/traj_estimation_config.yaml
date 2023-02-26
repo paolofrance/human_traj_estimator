@@ -13,5 +13,10 @@ robot_has_human_reference: false
 #K_assistance: 0.0001
 #K_assistance: 0.0001
 
-K_tras: 0.0001
-K_rot: 0.000001
+# UR5 
+#K_tras: 0.0001
+#K_rot: 0.000001
+
+#UR10
+K_tras: 0.00005
+K_rot: 0.0000001

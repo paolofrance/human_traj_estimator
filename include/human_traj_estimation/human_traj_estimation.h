@@ -9,6 +9,7 @@
 #include <std_msgs/Float32.h>
 #include <rotations_helper/euler_angles_helper.h>
 // #include <pbo_service/updateKest.h>
+#include <std_srvs/Trigger.h>
 
 class TrajEstimator
 {
@@ -25,6 +26,9 @@ public:
   void currPoseCallback(const geometry_msgs::PoseStampedConstPtr& msg );
 //   double evaluateFis   (double dforce, double vel );
   bool updatePoseEstimate(geometry_msgs::PoseStamped& ret); 
+  bool resetPose(std_srvs::Trigger::Request  &req,
+                 std_srvs::Trigger::Response &res);
+  
 //   bool updateKestSrv( pbo_service::updateKest::Request  &req,
 //                       pbo_service::updateKest::Response &res);
   

@@ -151,6 +151,21 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 
 
 
+bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
+                              std_srvs::Trigger::Response &res)
+{
+  init_pose_ = cur_pos_;
+  last_pose_ = cur_pos_;
+  
+  ROS_INFO_STREAM("resetting estimation pose. this pose: \n" << init_pose_);
+  
+  res.success=true;
+  return true;
+}
+
+
+
+
 
 
 
