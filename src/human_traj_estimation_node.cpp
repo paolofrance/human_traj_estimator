@@ -79,7 +79,7 @@ int main(int argc, char **argv)
   {
     geometry_msgs::PoseStamped p;
     if (!te.updatePoseEstimate(p))
-      ROS_ERROR_STREAM_THROTTLE(1.0,"error in updating the estimated pose");
+      ROS_ERROR_STREAM_THROTTLE(5.0,"error in updating the estimated pose . IS the pose initialized?");
     else
     {
       p.header.stamp = ros::Time::now();
@@ -94,7 +94,6 @@ int main(int argc, char **argv)
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
     
     ROS_INFO_STREAM_THROTTLE(5.0,"looping .");
-    ROS_INFO_STREAM_THROTTLE(5.0,"pose.\n"<<p);
     
     rate.sleep();
   }
