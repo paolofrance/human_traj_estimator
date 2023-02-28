@@ -2,6 +2,7 @@
 #include <human_traj_estimation/utils.h>
 #include <ros/package.h>
 #include <tf_conversions/tf_eigen.h>
+#include <tf_conversions/tf_eigen.h>
 #include <tf2_eigen/tf2_eigen.h>
 #include <tf/transform_listener.h>
 #include <eigen_conversions/eigen_msg.h>
@@ -187,6 +188,7 @@ bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
 {
   tf::TransformListener listener_;
   tf::StampedTransform transform_;
+  ROS_INFO_STREAM("reading transform from " << base_link_ << " to " << tool_link_);
   listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0));
   listener_.lookupTransform (base_link_, tool_link_, ros::Time(0)    , transform_);
   
