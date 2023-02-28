@@ -186,16 +186,24 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
                               std_srvs::Trigger::Response &res)
 {
-  tf::TransformListener listener_;
-  tf::StampedTransform transform_;
-  ROS_INFO_STREAM("reading transform from " << base_link_ << " to " << tool_link_);
-  listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0));
-  listener_.lookupTransform (base_link_, tool_link_, ros::Time(0)    , transform_);
+  init_pos_ok = false;
+//   tf::TransformListener listener_;
+//   tf::StampedTransform transform_;
+//   ROS_INFO_STREAM("reading transform from " << base_link_ << " to " << tool_link_);
+//   listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0));
+//   listener_.lookupTransform (base_link_, tool_link_, ros::Time(0)    , transform_);
+//   
+//   Eigen::Affine3d tmp;
+//   tf::poseTFToEigen(transform_,tmp
+//   tf::poseEigenToMsg (tmp, cur_pos_.pose);
   
-  Eigen::Affine3d tmp;
-  tf::poseTFToEigen(transform_,tmp);
-  
-  tf::poseEigenToMsg (tmp, cur_pos_.pose);
+  // TODO::might not be needed while, check
+  while(!init_pos_ok)
+  {
+    ROS_INFO_STREAM_THROTTLE(1.0,"waiting for current pose to be read");
+    ros::Duration(0.01);
+  }
+  init_pos_ok = true;
   
   init_pose_ = cur_pos_;
   last_pose_ = cur_pos_;
