@@ -63,7 +63,8 @@ int main(int argc, char **argv)
   
   ros::Publisher assistance_pub = nh.advertise<geometry_msgs::TwistStamped>(assistance_topic,10);
   ros::Publisher trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>(reference_traj,10);
-  ros::Publisher r_trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>("/target_cart_pose",10);
+//   ros::Publisher r_trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>("/target_cart_pose",10);
+  ros::Publisher r_trajectory_pub = nh.advertise<geometry_msgs::PoseStamped>("/human_estimated_pose",10);
   
 //   ros::ServiceServer update_Kest_server = nh.advertiseService(update_Kest, &TrajEstimator::updateKestSrv, &te);
   
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
     {
       p.header.stamp = ros::Time::now();
       trajectory_pub.publish(p);
-      if(robot_ref)
+//       if(robot_ref)
         r_trajectory_pub.publish(p);
     }
     
