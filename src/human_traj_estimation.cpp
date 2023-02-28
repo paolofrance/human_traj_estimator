@@ -123,6 +123,8 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
       rotation_quaternion = additional_rotation_quaternion * rotation_quaternion;
       tf2::convert(rotation_quaternion, ret.pose.orientation);
       
+      ROS_INFO_STREAM_THROTTLE(1.0,"updated_pose: \n" << ret);
+      
     }
     last_pose_ = ret;
   }
