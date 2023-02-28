@@ -110,6 +110,22 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
     else
       ret.pose = cur_pos_.pose;
     
+    
+    
+    if(isnan(w_b_(0)))
+      ROS_FATAL_STREAM("w_b_(0) : "<<w_b_(0));
+    if(isnan(w_b_(1)))
+      ROS_FATAL_STREAM("w_b_(1) : "<<w_b_(1));
+    if(isnan(w_b_(2)))
+      ROS_FATAL_STREAM("w_b_(2) : "<<w_b_(2));
+    if(isnan(w_b_(3)))
+      ROS_FATAL_STREAM("w_b_(3) : "<<w_b_(3));
+    if(isnan(w_b_(4)))
+      ROS_FATAL_STREAM("w_b_(4) : "<<w_b_(4));
+    if(isnan(w_b_(5)))
+      ROS_FATAL_STREAM("w_b_(5) : "<<w_b_(5));
+    
+    
     if (! isnan (w_b_(0)/std::fabs(w_b_(0))) )
     {
       ret.pose.position.x += K_tras_ * w_b_(0) ;
