@@ -7,6 +7,11 @@ pos_topic       : "current_pose"
 assistance_topic: "assistance"
 reference_traj  : "human_target"
 
+
+base_link: "base_link"
+tool_link: "grasping"
+
+
 robot_has_human_reference: false
 
 #K_assistance: 0.0002
@@ -20,3 +25,7 @@ robot_has_human_reference: false
 #UR10
 K_tras: 0.00005
 K_rot: 0.0000001
+
+
+
+

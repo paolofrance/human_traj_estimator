@@ -57,6 +57,9 @@ private:
   double K_tras_;
   double K_rot_;
   
+  std::string tool_link_;
+  std::string base_link_;
+  
   double max_fl_;
   double min_fl_;
   double alpha_;

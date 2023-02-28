@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   rotations_helper
+  tf_conversions
+  eigen_conversions
 #   pbo_service
   )
 

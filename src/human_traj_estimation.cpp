@@ -3,6 +3,9 @@
 #include <ros/package.h>
 #include <tf_conversions/tf_eigen.h>
 #include <tf2_eigen/tf2_eigen.h>
+#include <tf/transform_listener.h>
+#include <eigen_conversions/eigen_msg.h>
+
 
 TrajEstimator::TrajEstimator(ros::NodeHandle nh)
 :nh_(nh)
@@ -28,7 +31,18 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
     K_rot_=0.000001;
     ROS_WARN_STREAM (nh_.getNamespace() << " /K_tras set. default : " << K_rot_);
   }
-  
+
+  if ( !nh_.getParam ( "base_link", base_link_) )
+  {
+    base_link_="base_link";
+    ROS_WARN_STREAM (nh_.getNamespace() << " /base_link set. default : " << base_link_);
+  }
+  if ( !nh_.getParam ( "tool_link", tool_link_) )
+  {
+    tool_link_="tool_link";
+    ROS_WARN_STREAM (nh_.getNamespace() << " /tool_link set. default : " << tool_link_);
+  }
+
   ROS_INFO_STREAM (nh_.getNamespace() << " /K_tras set. default : " << K_tras_);
   ROS_INFO_STREAM (nh_.getNamespace() << " /K_rot set. default : " << K_rot_);
   
@@ -171,6 +185,16 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
 bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
                               std_srvs::Trigger::Response &res)
 {
+  tf::TransformListener listener_;
+  tf::StampedTransform transform_;
+  listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0));
+  listener_.lookupTransform (base_link_, tool_link_, ros::Time(0)    , transform_);
+  
+  Eigen::Affine3d tmp;
+  tf::poseTFToEigen(transform_,tmp);
+  
+  tf::poseEigenToMsg (tmp, cur_pos_.pose);
+  
   init_pose_ = cur_pos_;
   last_pose_ = cur_pos_;
   
