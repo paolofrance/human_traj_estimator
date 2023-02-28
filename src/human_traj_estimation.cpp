@@ -121,7 +121,7 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
       Eigen::Quaterniond rotation_quaternion(T_robot_base_targetpose_.rotation());
       Eigen::Quaterniond additional_rotation_quaternion(Eigen::AngleAxisd(delta_z, Eigen::Vector3d::UnitZ()));
       rotation_quaternion = additional_rotation_quaternion * rotation_quaternion;
-      tf2::convert(rotation_quaternion, ret.pose.orientation);
+//       tf2::convert(rotation_quaternion, ret.pose.orientation);
       
     }
     last_pose_ = ret;
