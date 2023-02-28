@@ -130,7 +130,7 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
   }
   else
   {
-    ROS_WARN_STREAM(5.0,"pose not initialized !");
+    ROS_WARN_STREAM_THROTTLE(5.0,"pose not initialized !");
     return false;
   }
   
