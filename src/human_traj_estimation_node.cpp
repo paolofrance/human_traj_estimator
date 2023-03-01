@@ -79,7 +79,9 @@ int main(int argc, char **argv)
   {
     geometry_msgs::PoseStamped p;
     if (!te.updatePoseEstimate(p))
+    {
       ROS_ERROR_STREAM_THROTTLE(5.0,"error in updating the estimated pose . IS the pose initialized?");
+    }
     else
     {
       p.header.stamp = ros::Time::now();
@@ -88,10 +90,12 @@ int main(int argc, char **argv)
         r_trajectory_pub.publish(p);
       
       
-    tf::Transform transform;
-    
-    tf::poseMsgToTF(p.pose,transform);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
+      tf::Transform transform;
+      
+      tf::poseMsgToTF(p.pose,transform);
+      br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
+      te.init_pos_ok = false;
+
     }
     
     

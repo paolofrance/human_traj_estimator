@@ -36,6 +36,7 @@ public:
   double init_rot_;
   
   Eigen::Affine3d T_robot_base_targetpose_;
+  bool init_pos_ok;
 
 private:
   ros::NodeHandle nh_;
@@ -47,7 +48,6 @@ private:
   Eigen::Vector6d velocity_;
   Eigen::Vector6d dW_;
   
-  bool init_pos_ok;
   bool first_cb_;
   
   geometry_msgs::PoseStamped cur_pos_;
