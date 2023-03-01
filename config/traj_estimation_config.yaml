@@ -1,4 +1,4 @@
-#wrench_topic    : "filtered_wrench_base"
+# topics where important informations are published
 wrench_topic    : "filtered_wrench_base"
 dwrench_topic   : "delta_force"
 vel_topic       : "current_velocity"
@@ -7,25 +7,17 @@ pos_topic       : "current_pose"
 assistance_topic: "assistance"
 reference_traj  : "human_target"
 
-
+# kinematic chain of the robot
 base_link: "base_link"
 tool_link: "grasping"
 
 
-robot_has_human_reference: false
+robot_has_human_reference: false   # no need to use this
 
-#K_assistance: 0.0002
-#K_assistance: 0.0001
-#K_assistance: 0.0001
-
-# UR5 
-#K_tras: 0.0001
-#K_rot: 0.000001
-
-#UR10
-K_tras: 0.00005
-K_rot: 0.0000001
-
+# gains used to update the human desired pose
+# DrapeBot
+K_tras: 0.00005    # used to update the pose on the three directions
+K_rot: 0.0000001   # used to update the pose on the rotation along vertical axis
 
 
 
