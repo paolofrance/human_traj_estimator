@@ -86,12 +86,14 @@ int main(int argc, char **argv)
       trajectory_pub.publish(p);
       if(robot_ref)
         r_trajectory_pub.publish(p);
-    }
-    
+      
+      
     tf::Transform transform;
     
     tf::poseMsgToTF(p.pose,transform);
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
+    }
+    
     
     ROS_INFO_STREAM_THROTTLE(5.0,"looping .");
     
