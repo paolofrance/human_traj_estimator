@@ -104,7 +104,7 @@ void TrajEstimator::currPoseCallback(const geometry_msgs::PoseStampedConstPtr& m
   
   if (!init_pos_ok)
   {
-    ROS_INFO_STREAM("[human_traj_estimation] initializing pose for human desired trajectory update");
+    ROS_DEBUG_STREAM("[human_traj_estimation] initializing pose for human desired trajectory update");
     init_pose_ = cur_pos_;
     last_pose_ = cur_pos_;
     init_pos_ok = true;
