@@ -161,7 +161,7 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
   }
   else
   {
-    ROS_WARN_STREAM_THROTTLE(10.0,"[human_traj_estimation] initial pose for human desired trajectory update not yet initialized - not an issue if there is NO collaborative transport");
+    ROS_DEBUG_STREAM_THROTTLE(10.0,"[human_traj_estimation] initial pose for human desired trajectory update not yet initialized - not an issue if there is NO collaborative transport");
     return false;
   }
   
@@ -209,7 +209,7 @@ bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
   init_pose_ = cur_pos_;
   last_pose_ = cur_pos_;
   
-  ROS_INFO_STREAM("resetting estimation pose. this pose: \n" << init_pose_);
+  ROS_INFO_STREAM("resetting estimation pose. new pose: \n" << init_pose_);
   
   res.success=true;
   return true;
