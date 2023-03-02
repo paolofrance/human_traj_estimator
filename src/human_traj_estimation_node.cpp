@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     geometry_msgs::PoseStamped p;
     if (!te.updatePoseEstimate(p))
     {
-      ROS_WARN_STREAM_THROTTLE(10.0,"error in updating the estimated pose . IS the pose initialized?");
+      ROS_WARN_STREAM_THROTTLE(10.0,"waiting for collaborative transport to update the estimated pose");
     }
     else
     {
