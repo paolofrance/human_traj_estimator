@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     }
     
     
-    ROS_INFO_STREAM_THROTTLE(5.0,"looping .");
+    ROS_INFO_STREAM_THROTTLE(5.0,"[human_traj_estimation] looping .");
     
     rate.sleep();
   }
