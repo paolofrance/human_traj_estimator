@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     if (!te.updatePoseEstimate(p))
     {
       ROS_WARN_STREAM_THROTTLE(10.0,"waiting for collaborative transport to update the estimated pose");
+      te.init_pos_ok = false;
     }
     else
     {
@@ -94,8 +95,6 @@ int main(int argc, char **argv)
       
       tf::poseMsgToTF(p.pose,transform);
       br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
-      te.init_pos_ok = false;
-
     }
     
     
