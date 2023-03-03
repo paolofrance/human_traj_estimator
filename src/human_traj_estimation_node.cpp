@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     if (!te.updatePoseEstimate(p))
     {
       ROS_WARN_STREAM_THROTTLE(10.0,"waiting for collaborative transport to update the estimated pose");
-      te.init_pos_ok = false;
+//       te.init_pos_ok = false;
     }
     else
     {
@@ -89,16 +89,14 @@ int main(int argc, char **argv)
       trajectory_pub.publish(p);
       if(robot_ref)
         r_trajectory_pub.publish(p);
-      
-      
-      tf::Transform transform;
-      
-      tf::poseMsgToTF(p.pose,transform);
-      br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
     }
     
+    tf::Transform transform;
     
-    ROS_INFO_STREAM_THROTTLE(5.0,"[human_traj_estimation] looping .");
+    tf::poseMsgToTF(p.pose,transform);
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "human_trg_pose"));
+    
+    ROS_INFO_STREAM_THROTTLE(5.0,"looping .");
     
     rate.sleep();
   }
