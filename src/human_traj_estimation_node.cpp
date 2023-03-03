@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     if (!te.updatePoseEstimate(p))
     {
       ROS_WARN_STREAM_THROTTLE(10.0,"waiting for collaborative transport to update the estimated pose");
-      te.init_pos_ok = false;
+//       te.init_pos_ok = false;
     }
     else
     {
