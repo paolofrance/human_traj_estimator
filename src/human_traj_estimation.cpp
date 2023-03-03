@@ -121,7 +121,7 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
   {
     
 //     ret.pose.orientation = init_pose_.pose.orientation;
-    if (alpha_>5)
+    if (alpha_>0.5)
       ret.pose = last_pose_.pose;
     else
       ret.pose = cur_pos_.pose;
