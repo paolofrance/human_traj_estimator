@@ -53,6 +53,11 @@ TrajEstimator::TrajEstimator(ros::NodeHandle nh)
     ROS_WARN_STREAM (nh_.getNamespace() << " /max_fl set. default: " << max_fl_);
   }
   
+  if ( !nh.getParam ( "alpha_switch", alpha_switch_) )
+  {
+    alpha_switch_ = 0.5;
+    ROS_WARN_STREAM (nh.getNamespace() << " /alpha_switch_ not set. default " << alpha_switch_);
+    
   alpha_ = 0.95;
   init_pos_ok = false;
   first_cb_ = false;
@@ -121,7 +126,7 @@ bool TrajEstimator::updatePoseEstimate(geometry_msgs::PoseStamped& ret)
   {
     
 //     ret.pose.orientation = init_pose_.pose.orientation;
-    if (alpha_>0.5)
+    if (alpha_>alpha_switch_)
       ret.pose = last_pose_.pose;
     else
       ret.pose = cur_pos_.pose;

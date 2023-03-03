@@ -21,3 +21,4 @@ K_rot: 0.0000001   # used to update the pose on the rotation along vertical axis
 
 
 
+alpha_switch: 0.5

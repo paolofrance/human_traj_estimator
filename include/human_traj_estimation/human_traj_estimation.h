@@ -50,6 +50,8 @@ private:
   
   bool first_cb_;
   
+  double alpha_switch_;
+  
   geometry_msgs::PoseStamped cur_pos_;
   geometry_msgs::PoseStamped init_pose_;
   geometry_msgs::PoseStamped last_pose_;
