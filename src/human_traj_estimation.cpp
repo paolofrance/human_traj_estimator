@@ -194,15 +194,21 @@ bool TrajEstimator::resetPose(std_srvs::Trigger::Request  &req,
                               std_srvs::Trigger::Response &res)
 {
   init_pos_ok = false;
+  
 //   tf::TransformListener listener_;
 //   tf::StampedTransform transform_;
 //   ROS_INFO_STREAM("reading transform from " << base_link_ << " to " << tool_link_);
-//   listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0));
+//   if( !listener_.waitForTransform(base_link_, tool_link_, ros::Time::now(), ros::Duration(1.0)) )
+//   {
+//     ROS_FATAL_STREAM("Transform between "<< base_link_ << " and " << tool_link_ << " not found. waiting to initialize the pose");
+//     res.success=false;
+//     return true;
+//   }
 //   listener_.lookupTransform (base_link_, tool_link_, ros::Time(0)    , transform_);
-//   
 //   Eigen::Affine3d tmp;
-//   tf::poseTFToEigen(transform_,tmp
+//   tf::poseTFToEigen(transform_,tmp);
 //   tf::poseEigenToMsg (tmp, cur_pos_.pose);
+  
   
   // TODO::might not be needed while, check
   while(!init_pos_ok)
