@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rotations_helper
   tf_conversions
   eigen_conversions
+  configuration_msgs
 #   pbo_service
   )
 
@@ -32,6 +33,11 @@ ${catkin_INCLUDE_DIRS}
 add_library(
 human_traj_estimation src/human_traj_estimation.cpp
 )
+
+
+add_executable(reset_pose_test src/reset_pose_test.cpp)
+target_link_libraries( reset_pose_test ${catkin_LIBRARIES})
+add_dependencies(reset_pose_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(human_traj_estimation_node src/human_traj_estimation_node.cpp)
 # target_link_libraries( human_traj_estimation_node human_traj_estimation ${catkin_LIBRARIES} fuzzylite)
